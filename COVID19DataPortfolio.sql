@@ -113,3 +113,23 @@ JOIN PortfolioProject..CovidVaccinations vac
 	AND dea.location = vac.location
 WHERE dea.continent IS NOT NULL
 --ORDER BY 1,2,3
+
+CREATE VIEW ContinentMortalityRates AS
+SELECT location, MAX(cast(total_deaths AS int)) AS max_total_deaths, MAX(total_deaths/population)*100 AS max_mortality_rate
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NULL
+GROUP BY location
+--ORDER BY max_mortality_rate DESC
+
+CREATE VIEW PrevalenceRates AS
+SELECT location, population, MAX(total_cases) AS max_total_cases, (MAX(total_cases/population))*100 AS prevalence_rate
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NOT NULL
+GROUP BY location, population
+-- ORDER BY prevalence_rate DESC
+
+CREATE VIEW FatalityRates AS
+SELECT location, date, total_cases, total_deaths, (total_deaths/total_cases)*100 AS fatality_rate
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NOT NULL
+-- ORDER BY 1,2
